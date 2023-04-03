@@ -44,12 +44,12 @@ def update(id: int, request: schemas.Blog, db: Session = Depends(get_db)):
     db.commit()
     return { 'message': 'updated' }
 
-@app.get('/blog', status_code=status.HTTP_200_OK)
+@app.get('/blog', status_code=status.HTTP_200_OK, response_model=list[schemas.ShowBlog])
 def get_all(db: Session = Depends(get_db)):
     blogs = db.query(models.Blog).all()
     return blogs
 
-@app.get('/blog/{id}', status_code=status.HTTP_200_OK)
+@app.get('/blog/{id}', status_code=status.HTTP_200_OK, response_model=schemas.ShowBlog)
 def get_one(id: int, db: Session = Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == id).first()
 
@@ -57,3 +57,16 @@ def get_one(id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f'Blog {id} not found!')
     
     return blog
+
+@app.post('/user', status_code=status.HTTP_201_CREATED)
+def create_user(request: schemas.User, db: Session = Depends(get_db)):
+    user_exist = db.query(models.User).filter(models.User.email == request.email).first()
+
+    if user_exist:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='This user already exists.')
+    
+    new_user = models.User(name=request.name, email=request.email, password=request.password)
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user
