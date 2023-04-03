@@ -2,6 +2,7 @@ from fastapi import FastAPI, Depends, status, HTTPException
 from . import schemas, models
 from .database import engine, SessionLocal
 from sqlalchemy.orm import Session
+from .hashing import Hash
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -65,7 +66,7 @@ def create_user(request: schemas.User, db: Session = Depends(get_db)):
     if user_exist:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='This user already exists.')
     
-    new_user = models.User(name=request.name, email=request.email, password=request.password)
+    new_user = models.User(name=request.name, email=request.email, password=Hash.bcrypt(request.password))
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
