@@ -2,8 +2,8 @@ from fastapi import status, HTTPException
 from .. import schemas, models
 from sqlalchemy.orm import Session
 
-def create(request: schemas.Blog, db: Session):
-    new_blog = models.Blog(title=request.title, body=request.body, user_id=1)
+def create(request: schemas.CreateBlog, db: Session):
+    new_blog = models.Blog(title=request.title, body=request.body, user_id=request.user_id)
     db.add(new_blog)
     db.commit()
     db.refresh(new_blog)

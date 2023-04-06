@@ -12,6 +12,4 @@ app.include_router(router=user.router)
 app.include_router(router=blog.router)
 app.include_router(router=auth.router)
 
-if __name__ == '__main__':
-    uvicorn.run(app)
 

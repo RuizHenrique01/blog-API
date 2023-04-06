@@ -9,6 +9,11 @@ class Blog(BlogBase):
     class Config:
         orm_mode = True
 
+class CreateBlog(BlogBase):
+    user_id: int
+    class Config:
+        orm_mode = True
+
 class User(BaseModel):
     name: str
     email: str

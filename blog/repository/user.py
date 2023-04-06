@@ -22,3 +22,11 @@ def get_one(id: int, db: Session):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f'User {id} not found!')
     
     return user
+
+def get_by_email(email:str, db: Session):
+    user = db.query(models.User).filter(models.User.email == email).first()
+
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'User not found!')
+
+    return user

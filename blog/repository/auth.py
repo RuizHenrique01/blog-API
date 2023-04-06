@@ -13,6 +13,6 @@ def login(request: schemas.Login, db: Session):
     if not Hash.verify(user.password, request.password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid login.')
 
-    token_generated = token.create_access_token(data={"sub": user.email})
+    token_generated = token.create_access_token(data={"sub": str(user.id)})
 
     return {"access_token": token_generated, "token_type": "bearer"}
